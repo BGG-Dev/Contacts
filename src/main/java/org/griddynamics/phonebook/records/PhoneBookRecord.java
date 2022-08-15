@@ -7,28 +7,15 @@ import org.griddynamics.phonebook.PhoneNumber;
  */
 public abstract class PhoneBookRecord {
 
-    // Name
-    private final String name;
-
     // Phone number
-    private final PhoneNumber phoneNumber;
+    private PhoneNumber phoneNumber;
 
     /**
      * Package-private default constructor
-     * @param name
      * @param phoneNumber
      */
-    PhoneBookRecord(String name, PhoneNumber phoneNumber) {
-        this.name = name;
+    PhoneBookRecord(PhoneNumber phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    /**
-     * name getter
-     * @return
-     */
-    public String getName() {
-        return name;
     }
 
     /**
@@ -37,5 +24,13 @@ public abstract class PhoneBookRecord {
      */
     public PhoneNumber getPhoneNumber() {
         return phoneNumber;
+    }
+
+    /**
+     * Phone number setter
+     * @param phoneNumber | new PhoneNumber instance
+     */
+    public void setPhoneNumber(PhoneNumber phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

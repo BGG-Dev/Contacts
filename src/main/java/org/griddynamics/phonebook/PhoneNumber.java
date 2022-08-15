@@ -1,5 +1,7 @@
 package org.griddynamics.phonebook;
 
+import java.util.regex.Pattern;
+
 /**
  * Phone number storing class
  * with additional logic for
@@ -11,8 +13,8 @@ public class PhoneNumber {
     private final String phoneNumber;
 
     // Phone number regex
-    //private static final String PHONE_NUMBER = "\\d{10}|(?:\\d{3}-){2}\\d{4}|\\(\\d{3}\\)\\d{3}-?\\d{4}";
-    private static final String PHONE_NUMBER = ".+";
+    //private static final Pattern PHONE_NUMBER = Pattern.compile("\\+?[a-z0-9]+[- ][a-z0-9]{2,}");
+    private static final Pattern PHONE_NUMBER = Pattern.compile("^\\+?(\\(\\w+\\)|\\w+[ -]\\(\\w{2,}\\)|\\w+)([ -]\\w{2,})*");
 
     /**
      * Default private constructor
@@ -30,12 +32,31 @@ public class PhoneNumber {
      * @return PhoneNumber instance
      * @throws IllegalArgumentException | If given string does not match phone number regex
      */
-    public static PhoneNumber getInstance(String phoneNumber) throws IllegalArgumentException {
-        if (phoneNumber.matches(PHONE_NUMBER)) {
+    public static PhoneNumber parsePhoneNumber(String phoneNumber) throws IllegalArgumentException {
+        if (PHONE_NUMBER.matcher(phoneNumber).matches()) {
             return new PhoneNumber(phoneNumber);
         } else {
             throw new IllegalArgumentException("Given string does not match phone number regex");
         }
+    }
+
+    /**
+     * Returns PhoneNumber instance
+     * with special value, used then no actual phone number
+     * need to be stored
+     * @return
+     */
+    public static PhoneNumber getEmpty() {
+        return new PhoneNumber("");
+    }
+
+    /**
+     * Check if given string matches phone number regex
+     * @param candidate | String to validate
+     * @return | Match result
+     */
+    public static boolean isValid(String candidate) {
+        return PHONE_NUMBER.matcher(candidate).matches();
     }
 
     /**
@@ -44,5 +65,18 @@ public class PhoneNumber {
      */
     public String getPhoneNumber() {
         return phoneNumber;
+    }
+
+    /**
+     * toString overriding
+     * @return String representation of PhoneNumber instance
+     */
+    @Override
+    public String toString() {
+        if ("".equals(this.phoneNumber)) {
+            return "[no number]";
+        } else {
+            return this.phoneNumber;
+        }
     }
 }
