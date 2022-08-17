@@ -2,16 +2,32 @@ package org.griddynamics.phonebook.records;
 
 import org.griddynamics.phonebook.PhoneNumber;
 
+import java.time.LocalDate;
+
 /**
  * Represents person phone book record
  */
 public class Person extends PhoneBookRecord {
+
+    /**
+     * Gender enum
+     */
+    public enum Gender {
+        MALE,
+        FEMALE
+    }
 
     // Name
     private String name;
 
     // Surname
     private String surname;
+
+    // Birthdate
+    private LocalDate birthdate;
+
+    // Gender
+    private Gender gender;
 
     /**
      * Default constructor
@@ -20,13 +36,16 @@ public class Person extends PhoneBookRecord {
      * @param phoneNumber
      */
     private Person(String name, String surname,
-                  PhoneNumber phoneNumber) {
+                   LocalDate birthdate, Gender gender,
+                   PhoneNumber phoneNumber) {
         // Calling super
         super(phoneNumber);
 
-        // Initializing names
+        // Initializing fields
         this.name = name;
         this.surname = surname;
+        this.birthdate = birthdate;
+        this.gender = gender;
     }
 
     /**
@@ -40,6 +59,12 @@ public class Person extends PhoneBookRecord {
 
         // Surname
         private String surname;
+
+        // Birthdate
+        private LocalDate birthdate;
+
+        // Gender
+        private Gender gender;
 
         // Phone
         private PhoneNumber phoneNumber;
@@ -65,6 +90,25 @@ public class Person extends PhoneBookRecord {
         }
 
         /**
+         * birthdate setter
+         * @param birthdate | birthdate as LocalDateTime
+         */
+        public Builder setBirthdate(LocalDate birthdate) {
+            this.birthdate = birthdate;
+            return this;
+        }
+
+        /**
+         * Gender setter
+         * @param gender
+         * @return Builder self reference
+         */
+        public Builder setGender(Gender gender) {
+            this.gender = gender;
+            return this;
+        }
+
+        /**
          * phone number setter
          * @param phoneNumber | Phone number
          * @return Builder self reference
@@ -79,8 +123,23 @@ public class Person extends PhoneBookRecord {
          * @return | Person instance with values from Builder
          */
         public Person build() {
-            return new Person(this.name, this.surname, this.phoneNumber);
+            return new Person(this.name, this.surname,
+                              this.birthdate, this.gender,
+                              this.phoneNumber);
         }
+    }
+
+    /**
+     * getCaption overriding
+     * @return | Person's name as caption
+     */
+    @Override
+    public String getCaption() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(this.name);
+        stringBuilder.append(' ');
+        stringBuilder.append(this.surname);
+        return stringBuilder.toString();
     }
 
     /**
@@ -100,11 +159,28 @@ public class Person extends PhoneBookRecord {
     }
 
     /**
+     * birthdate getter
+     * @return
+     */
+    public LocalDate getBirthdate() {
+        return birthdate;
+    }
+
+    /**
+     * gender getter
+     * @return
+     */
+    public Gender getGender() {
+        return gender;
+    }
+
+    /**
      * name setter
      * @param name | New name value
      */
     public void setName(String name) {
         this.name = name;
+        updateLastEditTime();
     }
 
     /**
@@ -113,6 +189,25 @@ public class Person extends PhoneBookRecord {
      */
     public void setSurname(String surname) {
         this.surname = surname;
+        updateLastEditTime();
+    }
+
+    /**
+     * birthdate setter
+     * @param birthdate
+     */
+    public void setBirthdate(LocalDate birthdate) {
+        this.birthdate = birthdate;
+        updateLastEditTime();
+    }
+
+    /**
+     * gender setter
+     * @param gender
+     */
+    public void setGender(Gender gender) {
+        this.gender = gender;
+        updateLastEditTime();
     }
 
     /**
@@ -121,12 +216,48 @@ public class Person extends PhoneBookRecord {
      */
     @Override
     public String toString() {
+        // Creating string builder
         StringBuilder stringBuilder = new StringBuilder();
+
+        // Appending name
+        stringBuilder.append("Name: ");
         stringBuilder.append(name);
-        stringBuilder.append(" ");
+        stringBuilder.append('\n');
+
+        // Appending surname
+        stringBuilder.append("Surname: ");
         stringBuilder.append(surname);
-        stringBuilder.append(", ");
-        stringBuilder.append(getPhoneNumber().toString());
+        stringBuilder.append('\n');
+
+        // Appending birthday
+        stringBuilder.append("Birth date: ");
+        if (birthdate == null) {
+            stringBuilder.append("[no data]");
+        } else {
+            stringBuilder.append(birthdate);
+        }
+        stringBuilder.append('\n');
+
+        // Appending gender
+        stringBuilder.append("Gender: ");
+        if (gender == null) {
+            stringBuilder.append("[no data]");
+        } else if (gender == Gender.MALE) {
+            stringBuilder.append('M');
+        } else {
+            stringBuilder.append('F');
+        }
+        stringBuilder.append('\n');
+
+        // Appending number
+        stringBuilder.append("Number: ");
+        stringBuilder.append(getPhoneNumber());
+        stringBuilder.append('\n');
+
+        // Appending times
+        appendTimeToStringBuilder(stringBuilder);
+
+        // Returning
         return stringBuilder.toString();
     }
 }

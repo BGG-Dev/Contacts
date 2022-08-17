@@ -63,4 +63,21 @@ public class PhoneBook {
     public int count() {
         return this.records.size();
     }
+
+    /**
+     * toString overriding
+     * @return String representation of PhoneBook
+     */
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < this.count(); i++) {
+            stringBuilder.append(i + 1);
+            stringBuilder.append(". ");
+            stringBuilder.append(this.getAt(i).getCaption());
+            stringBuilder.append('\n');
+        }
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        return stringBuilder.toString();
+    }
 }

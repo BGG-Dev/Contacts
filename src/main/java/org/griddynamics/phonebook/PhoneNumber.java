@@ -41,13 +41,11 @@ public class PhoneNumber {
     }
 
     /**
-     * Returns PhoneNumber instance
-     * with special value, used then no actual phone number
-     * need to be stored
+     * Returns instance of PhoneNumber with null as phoneNumber field
      * @return
      */
     public static PhoneNumber getEmpty() {
-        return new PhoneNumber("");
+        return new PhoneNumber(null);
     }
 
     /**
@@ -73,7 +71,7 @@ public class PhoneNumber {
      */
     @Override
     public String toString() {
-        if ("".equals(this.phoneNumber)) {
+        if (this.phoneNumber == null) {
             return "[no number]";
         } else {
             return this.phoneNumber;
