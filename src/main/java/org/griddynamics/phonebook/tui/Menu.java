@@ -15,6 +15,9 @@ abstract class Menu {
     // Stdin scanner
     private final Scanner scanner;
 
+    // User's event command
+    private String eventCommand;
+
     /**
      * Default constructor
      * @param map | Command -> Method map
@@ -34,18 +37,19 @@ abstract class Menu {
      */
     void event() {
         // Reading command
-        String command = scanner.nextLine();
+        eventCommand = scanner.nextLine();
 
         // Executing
         for (Map.Entry<String, Runnable> current : map.entrySet()) {
-            if (command.equals(current.getKey())) {
+            //if (command.equals(current.getKey())) {
+            if (eventCommand.matches(current.getKey())) {
                 current.getValue().run();
                 return;
             }
         }
 
         // No execution -> print error
-        System.out.println(TUIMessages.INVALID_COMMAND);
+        System.out.println(UtilsTUI.INVALID_COMMAND);
     }
 
     /**
@@ -54,5 +58,13 @@ abstract class Menu {
      */
     Scanner getScanner() {
         return this.scanner;
+    }
+
+    /**
+     * User's command getter
+     * @return Last user's command as String
+     */
+    String getEventCommand() {
+        return this.eventCommand;
     }
 }

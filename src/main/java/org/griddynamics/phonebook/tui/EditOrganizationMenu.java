@@ -60,7 +60,7 @@ public class EditOrganizationMenu extends Menu {
             System.out.print("Select a field (address, number): ");
             event();
         }
-        System.out.println("The record updated!");
+        System.out.println(UtilsTUI.SAVED_AFTER_EDIT_MESSAGE);
     }
 
     private void address() {
@@ -80,7 +80,7 @@ public class EditOrganizationMenu extends Menu {
         try {
             organization.setPhoneNumber(PhoneNumber.parsePhoneNumber(getScanner().nextLine()));
         } catch (IllegalArgumentException e) {
-            System.out.println(TUIMessages.INVALID_PHONE_WARNING);
+            System.out.println(UtilsTUI.INVALID_PHONE_WARNING);
             organization.setPhoneNumber(PhoneNumber.getEmpty());
         }
         this.isEdited = true;

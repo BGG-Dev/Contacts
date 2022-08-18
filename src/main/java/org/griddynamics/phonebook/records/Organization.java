@@ -1,5 +1,6 @@
 package org.griddynamics.phonebook.records;
 
+import org.griddynamics.phonebook.PhoneBook;
 import org.griddynamics.phonebook.PhoneNumber;
 
 /**
@@ -20,9 +21,9 @@ public class Organization extends PhoneBookRecord {
      * @param phoneNumber
      */
     private Organization(String organizationName, String address,
-                         PhoneNumber phoneNumber) {
+                         PhoneBook owner, PhoneNumber phoneNumber) {
         // Calling super
-        super(phoneNumber);
+        super(owner, phoneNumber);
 
         // Initializing fields
         this.organizationName = organizationName;
@@ -78,9 +79,9 @@ public class Organization extends PhoneBookRecord {
          * Build method
          * @return Person instance with fields from Builder
          */
-        public Organization build() {
+        public Organization build(PhoneBook owner) {
             return new Organization(this.organizationName, this.address,
-                                    this.phoneNumber);
+                                    owner, this.phoneNumber);
         }
     }
 
@@ -125,6 +126,24 @@ public class Organization extends PhoneBookRecord {
     public void setAddress(String address) {
         this.address = address;
         updateLastEditTime();
+    }
+
+    /**
+     * getKeywordString overriding
+     * @return String - container of Organization keywords
+     */
+    @Override
+    public String getKeywordString() {
+        // Creating keyword string
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(organizationName);
+        stringBuilder.append(' ');
+        stringBuilder.append(address);
+        stringBuilder.append(' ');
+        stringBuilder.append(getPhoneNumber());
+
+        // Returning
+        return stringBuilder.toString();
     }
 
     /**

@@ -4,7 +4,9 @@ import org.griddynamics.phonebook.records.PhoneBookRecord;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Represents phone book
@@ -41,13 +43,11 @@ public class PhoneBook {
     }
 
     /**
-     * Removes record with given index from list
-     * @param pos | Index of record to remove
-     * @return Self reference
+     * Removes given record
+     * @param record Record instance to remove
      */
-    public PhoneBook removeAt(int pos) {
-        this.records.remove(pos);
-        return this;
+    public void remove(PhoneBookRecord record) {
+        this.records.remove(record);
     }
 
     /**
@@ -62,6 +62,26 @@ public class PhoneBook {
      */
     public int count() {
         return this.records.size();
+    }
+
+    /**
+     * Searches record by query
+     * @param query String - query to search for
+     * @return List of phone book records,
+     * all corresponds to given record
+     */
+    public List<PhoneBookRecord> search(String query) {
+        // Making case-insensitive
+        String caseInsensitiveQuery = query.toLowerCase();
+
+        // Returning
+        return records.stream()
+                      .filter(e -> {
+                          String temp = e.getKeywordString().toLowerCase();
+                          return temp.matches(caseInsensitiveQuery) ||
+                                 temp.contains(caseInsensitiveQuery);
+                      })
+                      .toList();
     }
 
     /**

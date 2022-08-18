@@ -1,5 +1,6 @@
 package org.griddynamics.phonebook.records;
 
+import org.griddynamics.phonebook.PhoneBook;
 import org.griddynamics.phonebook.PhoneNumber;
 
 import java.time.LocalDateTime;
@@ -9,6 +10,9 @@ import java.time.format.DateTimeFormatter;
  * Abstract class to inherit phone book records from
  */
 public abstract class PhoneBookRecord {
+
+    // PhoneBook-record owner
+    private final PhoneBook owner;
 
     // Phone number
     private PhoneNumber phoneNumber;
@@ -21,9 +25,13 @@ public abstract class PhoneBookRecord {
 
     /**
      * Package-private default constructor
+     * @param owner Owner of this record
      * @param phoneNumber
      */
-    PhoneBookRecord(PhoneNumber phoneNumber) {
+    PhoneBookRecord(PhoneBook owner, PhoneNumber phoneNumber) {
+        // Initializing owner
+        this.owner = owner;
+
         // Initializing phone number
         this.phoneNumber = phoneNumber;
 
@@ -37,6 +45,14 @@ public abstract class PhoneBookRecord {
      * @return | Record's caption as String
      */
     public abstract String getCaption();
+
+    /**
+     * Owner getter
+     * @return PhoneBook, which owns this record
+     */
+    public PhoneBook getOwner() {
+        return owner;
+    }
 
     /**
      * phone number getter
@@ -70,6 +86,11 @@ public abstract class PhoneBookRecord {
         this.phoneNumber = phoneNumber;
         updateLastEditTime();
     }
+
+    /**
+     * @return String - container of record's keywords
+     */
+    public abstract String getKeywordString();
 
     /**
      * Updates lastEditTime to now

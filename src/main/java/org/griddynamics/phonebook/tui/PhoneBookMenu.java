@@ -9,6 +9,7 @@ import org.griddynamics.phonebook.records.PhoneBookRecord;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,10 +32,9 @@ public final class PhoneBookMenu extends Menu {
 
         // Filling map with methods
         map.put("add", this::add);
-        map.put("remove", this::remove);
-        map.put("edit", this::edit);
+        map.put("list", this::list);
+        map.put("search", this::search);
         map.put("count", this::count);
-        map.put("info", this::info);
         map.put("exit", this::exit);
 
         // Initializing phoneBook
@@ -60,7 +60,7 @@ public final class PhoneBookMenu extends Menu {
     @Override
     public void menu() {
         while (true) {
-            System.out.print("Enter action (add, remove, edit, count, info, exit): ");
+            System.out.print("[menu] Enter action (add, list, search, count, exit): ");
             event();
             System.out.print('\n');
         }
@@ -120,7 +120,7 @@ public final class PhoneBookMenu extends Menu {
             try {
                 builder.setBirthdate(LocalDate.parse(getScanner().nextLine()));
             } catch (DateTimeException e) {
-                System.out.println(TUIMessages.INVALID_BIRTHDAY_WARNING);
+                System.out.println(UtilsTUI.INVALID_BIRTHDAY_WARNING);
                 builder.setBirthdate(null);
             }
 
@@ -136,7 +136,7 @@ public final class PhoneBookMenu extends Menu {
                     break;
                 default:
                     builder.setGender(null);
-                    System.out.println(TUIMessages.INVALID_GENDER_WARNING);
+                    System.out.println(UtilsTUI.INVALID_GENDER_WARNING);
                     break;
             }
 
@@ -145,12 +145,12 @@ public final class PhoneBookMenu extends Menu {
                 System.out.print("Enter the number: ");
                 builder.setPhoneNumber(PhoneNumber.parsePhoneNumber(getScanner().nextLine()));
             } catch (IllegalArgumentException e) {
-                System.out.println(TUIMessages.INVALID_PHONE_WARNING);
+                System.out.println(UtilsTUI.INVALID_PHONE_WARNING);
                 builder.setPhoneNumber(PhoneNumber.getEmpty());
             }
 
             // Adding
-            phoneBook.add(builder.build());
+            phoneBook.add(builder.build(phoneBook));
 
             // Setting flag
             isDone = true;
@@ -177,12 +177,12 @@ public final class PhoneBookMenu extends Menu {
                 System.out.print("Enter the number: ");
                 builder.setPhoneNumber(PhoneNumber.parsePhoneNumber(getScanner().nextLine()));
             } catch (IllegalArgumentException e) {
-                System.out.println(TUIMessages.INVALID_PHONE_WARNING);
+                System.out.println(UtilsTUI.INVALID_PHONE_WARNING);
                 builder.setPhoneNumber(PhoneNumber.getEmpty());
             }
 
             // Adding
-            phoneBook.add(builder.build());
+            phoneBook.add(builder.build(phoneBook));
 
             // Setting flag
             isDone = true;
@@ -197,100 +197,54 @@ public final class PhoneBookMenu extends Menu {
         adder.menu();
     }
 
-    private void remove() {
+    private void list() {
         // Checking for empty
-        if (this.phoneBook.count() == 0) {
-            System.out.println("No records to remove!");
+        if (phoneBook.count() == 0) {
+            System.out.println("No records in phone book!");
             return;
         }
 
         // Printing
-        System.out.println(this.phoneBook);
+        System.out.println(phoneBook);
+        System.out.print('\n');
 
-        // Selecting
-        int indexOfSelected = this.selectIndexOfRecord();
-
-        // Removing
-        this.phoneBook.removeAt(indexOfSelected);
-
-        // Printing
-        System.out.println("The record removed!");
+        // Creating new ListMenu instance
+        ListMenu.getInstance(phoneBook.asList()).menu();
     }
 
-    private void edit() {
-        // Checking for empty
-        if (this.phoneBook.count() == 0) {
-            System.out.println("No records to edit!");
-            return;
-        }
+    private void search() {
+        SearchMenu searchMenu;
+        do {
+            // Asking to enter query
+            System.out.print("Enter search query: ");
 
-        // Printing
-        System.out.println(this.phoneBook);
+            // Searching
+            List<PhoneBookRecord> result = phoneBook.search(getScanner().nextLine());
 
-        // Selecting record
-        int index = this.selectIndexOfRecord();
+            // Checking for 0
+            if (result.isEmpty()) {
+                System.out.println("No records found!");
+                return;
+            }
 
-        // Editing
-        Menu editMenu = null;
-        PhoneBookRecord temp = phoneBook.getAt(index);
-        if (temp.getClass() == Person.class) {
-            editMenu = EditPersonMenu.getInstance((Person)temp);
-        } else if (temp.getClass() == Organization.class) {
-            editMenu = EditOrganizationMenu.getInstance((Organization)temp);
-        } else {
-            System.exit(1);
-        }
-        editMenu.menu();
+            // Printing
+            for (int i = 0; i < result.size(); i++) {
+                System.out.printf("%d. %s\n", i + 1, result.get(i).getCaption());
+            }
+
+            // Creating searchMenu
+            searchMenu = SearchMenu.getInstance(result);
+
+            // Running
+            searchMenu.menu();
+        } while (searchMenu.isAgain());
     }
 
     private void count() {
         System.out.printf("The Phone Book has %d records.\n", this.phoneBook.count());
     }
 
-    private void info() {
-        // Checking for empty
-        if (this.phoneBook.count() == 0) {
-            System.out.println("The Phone Book has no records!");
-            return;
-        }
-
-        // Printing
-        System.out.println(this.phoneBook);
-
-        // Selecting
-        int index = selectIndexOfRecord();
-
-        // Displaying full info
-        System.out.println(phoneBook.getAt(index));
-    }
-
     private void exit() {
         System.exit(0);
-    }
-
-    private int selectIndexOfRecord() {
-        while (true) {
-            // Asking to enter number
-            System.out.print("Select a record: ");
-
-            // Trying to parse
-            int index;
-            try {
-                index = Integer.parseInt(getScanner().nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println(TUIMessages.INVALID_COMMAND);
-                continue;
-            }
-
-            // Checking for bound
-            index--;
-            if (0 > index || this.phoneBook.count() <= index) {
-                System.out.println("Index out of bounds!");
-                continue;
-            }
-
-            // Returning
-            return index;
-        }
     }
 }

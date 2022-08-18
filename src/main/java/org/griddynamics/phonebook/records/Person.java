@@ -1,5 +1,6 @@
 package org.griddynamics.phonebook.records;
 
+import org.griddynamics.phonebook.PhoneBook;
 import org.griddynamics.phonebook.PhoneNumber;
 
 import java.time.LocalDate;
@@ -13,8 +14,19 @@ public class Person extends PhoneBookRecord {
      * Gender enum
      */
     public enum Gender {
-        MALE,
-        FEMALE
+        MALE, FEMALE;
+
+        @Override
+        public String toString() {
+            switch (this) {
+                case MALE:
+                    return "M";
+                case FEMALE:
+                    return "F";
+                default:
+                    return "";
+            }
+        }
     }
 
     // Name
@@ -33,13 +45,14 @@ public class Person extends PhoneBookRecord {
      * Default constructor
      * @param name | Person's name as String
      * @param surname | Person's surname as String
+     * @param owner
      * @param phoneNumber
      */
     private Person(String name, String surname,
                    LocalDate birthdate, Gender gender,
-                   PhoneNumber phoneNumber) {
+                   PhoneBook owner, PhoneNumber phoneNumber) {
         // Calling super
-        super(phoneNumber);
+        super(owner, phoneNumber);
 
         // Initializing fields
         this.name = name;
@@ -122,10 +135,10 @@ public class Person extends PhoneBookRecord {
          * Build method
          * @return | Person instance with values from Builder
          */
-        public Person build() {
+        public Person build(PhoneBook owner) {
             return new Person(this.name, this.surname,
                               this.birthdate, this.gender,
-                              this.phoneNumber);
+                              owner, this.phoneNumber);
         }
     }
 
@@ -211,6 +224,26 @@ public class Person extends PhoneBookRecord {
     }
 
     /**
+     * getKeywordString Overriding
+     * @return String - container of record's keywords
+     */
+    @Override
+    public String getKeywordString() {
+        // Creating keyword string
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(name);
+        stringBuilder.append(' ');
+        stringBuilder.append(surname);
+        stringBuilder.append(' ');
+        stringBuilder.append(getBirthdate());
+        stringBuilder.append(' ');
+        stringBuilder.append(getPhoneNumber());
+
+        // Returning
+        return stringBuilder.toString();
+    }
+
+    /**
      * toString overriding
      * @return String representation of Person instance
      */
@@ -242,10 +275,8 @@ public class Person extends PhoneBookRecord {
         stringBuilder.append("Gender: ");
         if (gender == null) {
             stringBuilder.append("[no data]");
-        } else if (gender == Gender.MALE) {
-            stringBuilder.append('M');
         } else {
-            stringBuilder.append('F');
+            stringBuilder.append(gender);
         }
         stringBuilder.append('\n');
 

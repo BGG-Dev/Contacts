@@ -65,7 +65,7 @@ final class EditPersonMenu extends Menu {
             System.out.print("Select a field (name, surname, birth, gender, number): ");
             event();
         }
-        System.out.println("The record updated!");
+        System.out.println(UtilsTUI.SAVED_AFTER_EDIT_MESSAGE);
     }
 
     private void name() {
@@ -94,7 +94,7 @@ final class EditPersonMenu extends Menu {
         try {
             person.setBirthdate(LocalDate.parse(getScanner().nextLine()));
         } catch (DateTimeException e) {
-            System.out.println(TUIMessages.INVALID_BIRTHDAY_WARNING);
+            System.out.println(UtilsTUI.INVALID_BIRTHDAY_WARNING);
             person.setBirthdate(null);
         }
         this.isEdited = true;
@@ -115,7 +115,7 @@ final class EditPersonMenu extends Menu {
                 break;
             default:
                 person.setGender(null);
-                System.out.println(TUIMessages.INVALID_GENDER_WARNING);
+                System.out.println(UtilsTUI.INVALID_GENDER_WARNING);
                 break;
         }
         this.isEdited = true;
@@ -129,7 +129,7 @@ final class EditPersonMenu extends Menu {
         try {
             person.setPhoneNumber(PhoneNumber.parsePhoneNumber(getScanner().nextLine()));
         } catch (IllegalArgumentException e) {
-            System.out.println(TUIMessages.INVALID_PHONE_WARNING);
+            System.out.println(UtilsTUI.INVALID_PHONE_WARNING);
             person.setPhoneNumber(PhoneNumber.getEmpty());
         }
         this.isEdited = true;
